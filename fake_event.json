@@ -1,1 +1,31 @@
-{"event":{"id":6,"name":"Karaoke Night with the Gals","owner":null,"time":"2015-10-25T07:00:00.000Z","deadline":"2015-10-25T06:00:00.000Z","created_at":"2015-10-25T03:09:24.989Z","updated_at":"2015-10-25T03:09:24.989Z","destinations":[{"id":3,"name":"Eskimo Candy Inc","event_id":6,"category_id":null,"latitude":20.744994,"longitude":-156.449524,"address1":null,"address2":null,"city":null,"state":null,"country":null,"postal":null,"created_at":"2015-10-25T03:09:25.967Z","updated_at":"2015-10-25T03:09:25.967Z","vicinity":"2665 Wai Wai Place, Kihei"},{"id":4,"name":"GNC","event_id":6,"category_id":null,"latitude":20.752306,"longitude":-156.448987,"address1":null,"address2":null,"city":null,"state":null,"country":null,"postal":null,"created_at":"2015-10-25T03:09:26.464Z","updated_at":"2015-10-25T03:09:26.464Z","vicinity":"225 Piikea Avenue, Kihei"}]}}
+{
+  "event": {
+    "id": 1,
+    "name": "Bday Party",
+    "owner": null,
+    "time": "2015-10-25T01:00:00.000Z",
+    "deadline": "2015-10-25T12:00:00.000Z",
+    "created_at": "2015-10-25T02:57:44.973Z",
+    "updated_at": "2015-10-25T02:57:44.973Z",
+    "destinations": [
+      {
+        "id": 1,
+        "vicinity": "247 Piikea Avenue #10-101, Kihei",
+        "vote_count": 3,
+        "name": "Subway"
+      },
+      {
+        "id": 2,
+        "vicinity": "291 Piikea Avenue #121, Kihei",
+        "vote_count": 1,
+        "name": "Cold Stone Creamery"
+      },
+      {
+        "id": 3,
+        "vicinity": "247 Piikea Avenue #106, Kihei",
+        "vote_count": 0,
+        "name": "Starbucks"
+      }
+    ]
+  }
+}
