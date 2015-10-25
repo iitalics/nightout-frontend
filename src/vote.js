@@ -4,12 +4,13 @@ var PATH_VOTE       = "/fake_vote.json";
 const INTERVAL_PERIODIC_POLL = 5000;
 const INTERVAL_BACKUP = 10000; // if the ajax request fails
 
-const Button = ReactBootstrap.Button;
-const Input = ReactBootstrap.Input;
-const ListGroup = ReactBootstrap.ListGroup;
-const Label = ReactBootstrap.Label;
-const ProgressBar = ReactBootstrap.ProgressBar;
-const Badge = ReactBootstrap.Badge;
+const Button = ReactBootstrap.Button,
+	Input = ReactBootstrap.Input,
+	ListGroup = ReactBootstrap.ListGroup,
+	Label = ReactBootstrap.Label,
+	ProgressBar = ReactBootstrap.ProgressBar,
+	Badge = ReactBootstrap.Badge,
+	ListGroupItem = ReactBootstrap.ListGroupItem;
 
 // data from ajax
 var data = window["DATA"] = {};
@@ -70,10 +71,10 @@ var VoteRow = React.createClass({
 		if (dest.voteCount === 0) label = "None";
 
 		return (
-			<ReactBootstrap.ListGroupItem onClick={this.handleClick}>
+			<ListGroupItem onClick={this.handleClick}>
 				<strong>{dest.name}</strong>
 				<ProgressBar striped bsStyle={style} now={ratio * 88 + 12} label={label}/>
-			</ReactBootstrap.ListGroupItem>);
+			</ListGroupItem>);
 	},
 	handleClick : function () {
 		if (data.voteChoice)
@@ -81,6 +82,8 @@ var VoteRow = React.createClass({
 
 		// perform a vote
 		data.voteChoice = this.props.dest;
+		form.dests.forceUpdate();
+
 		$.ajax({
 			url : PATH_VOTE,
 			method : "POST"
