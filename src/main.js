@@ -1,11 +1,14 @@
-window["allSelected"] = [];
-var searchResults = null;
+var form = window["__form"] = {};
+var data = window["__data"] = {};
 
+data.eventName = "Event Name";
+data.time = "" + new Date();
+data.deadline = "" + new Date();
+data.allSelected = [];
 
 var SearchResult = React.createClass({
 	getInitialState : function () {
-		console.log("init:", this.props.place);
-		return {canAdd : allSelected.indexOf(this.props.place.id) === -1};
+		return {canAdd : data.allSelected.indexOf(this.props.place.id) === -1};
 	},
 	render : function () {
 		return (
@@ -27,12 +30,11 @@ var SearchResult = React.createClass({
 			return (<button className="btn btn-xs btn-danger" onClick={this.handleClick}>Remove</button>);
 	},
 	handleClick : function () {
-		console.log("click:", this.props.place);
 		var here = this.props.place;
 		if (this.state.canAdd)
-			allSelected.push(here.id);
+			data.allSelected.push(here.id);
 		else
-			allSelected = allSelected.filter(function (pl) { return pl.id !== here.id; });
+			data.allSelected = data.allSelected.filter(function (pl) { return pl.id !== here.id; });
 
 		this.setState({canAdd : !this.state.canAdd})
 	}
@@ -52,17 +54,18 @@ var SearchResults = React.createClass({
 			</table>);
 	}
 });
-var SearchText = React.createClass({
+var FormInput
+var FormSearchText = React.createClass({
 	render : function () {
 		return (
-			<input type="text" placeholder="Search..." autofocus="yes" className="form-control" onChange={this.handleChange}/>);
+			<input type="text" placeholder="Search..." autofocus="yes" className="form-control" onChange={this.handleChange} />);
 	},
 	handleChange : function (e) {
 		var val = e.target.value;
 		console.log(val);
 
 		performSearch(val, function (r) {
-			searchResults.setState({results : r});
+			form.searchResults.setState({results : r});
 		});
 	}
 });
@@ -93,7 +96,9 @@ function performSearch (search, cb) {
 	}
 
 	var r = [];
-	if (search != "") {
+
+	if (search) {
+		r = [];
 		for (var i = 0; i < everything.length; i++) 
 			if (find(everything[i]) !== -1)
 				r.push(everything[i]);
@@ -114,9 +119,17 @@ function performSearch (search, cb) {
 
 ReactDOM.render(
 	<div className="container">
-		<SearchText />
+		<div className="container-fluid row">
+			<label className="pull-left col-sm-5">Time:</label>
+			<input type="time" className="form-control pull-right col-sm-5" />
+		</div>
+		<FormSearchText />
 		<SearchResults ref={function (self) {
-			searchResults = self;
+			form.searchResults = self;
+
+			performSearch(null, function (r) {
+				self.setState({results : r});
+			});
 		}} />
 	</div>,
 	document.getElementById("everything"));
