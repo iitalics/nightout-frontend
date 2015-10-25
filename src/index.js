@@ -2,15 +2,19 @@
 var Button = ReactBootstrap.Button;
 var Table = ReactBootstrap.Table;
 
+var PATH_SUBMIT_EVENT = "/fake_event.json";
+var SUBMIT_POST = false; // in production, set to true
+var PATH_REDIRECT = "/vote.html#";
+
 // global lookup for form controls (submit button, text input...)
-var form = {};
+var form = window["FORM"] = {};
 form.ajaxPolling = false;
 
 // global lookup for form data
-var data = {};
+var data = window["DATA"] = {};
 data.eventName = "";
-data.time = "" + new Date();
-data.deadline = "" + new Date();
+data.time = "";
+data.deadline = "";
 data.allSelected = [];
 
 
@@ -116,13 +120,31 @@ var FormSearchText = React.createClass({
 var SubmitButton = React.createClass({
 	render : function () {
 		var enabled = true;
-		if (data.allSelected.length === 0)
+		if (form.ajaxPolling)
 			enabled = false;
-		else if (data.eventName.trim().length === 0)
+		else if (data.allSelected.length === 0)
+			enabled = false;
+		else if (data.eventName == "" || data.time == "" || data.deadline == "")
 			enabled = false;
 
 		return (
-			<Button style={{width: "100%"}} bsStyle="primary" disabled={!enabled}>{"Night out"}</Button>);
+			<Button style={{width: "100%"}} bsStyle="primary" disabled={!enabled}
+				onClick={this.submitForm}>{"Night out"}</Button>);
+	},
+	submitForm : function () {
+		$.ajax({
+			url : PATH_SUBMIT_EVENT,
+			method : SUBMIT_POST ? "POST" : "GET",
+			data : {
+				name : data.eventName,
+				time : data.time.toString(),
+				deadline : data.deadline.toString(),
+				place_ids : data.allSelected
+			}
+		}).done(function (res, status, ajax) {
+			var id = res.event.id;
+			document.location.href = PATH_REDIRECT + id;
+		});
 	}
 });
 
