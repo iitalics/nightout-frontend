@@ -86,7 +86,10 @@ var VoteRow = React.createClass({
 
 		$.ajax({
 			url : PATH_VOTE,
-			method : "POST"
+			method : "POST",
+			dataType : "json",
+
+			data : JSON.stringify({destination_id : data.voteChoice.id})
 		}).done(function (res, status, ajax) {
 			pollVotes();
 		});
