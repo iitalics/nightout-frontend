@@ -14,46 +14,6 @@ data.deadline = "" + new Date();
 data.allSelected = [];
 
 
-var allPlaces = [
-	Location("Eskimo Candy", "", 0),
-	Location("Mama's Fish House", "", 1),
-	Location("Kimo's", "", 2),
-	Location("Da Kitchen Cafe", "", 3),
-	Location("Cafe O'Lei Kihei", "", 4),
-	Location("Sansei Seafood & Sushi Bar", "", 5),
-	Location("Star Noodle", "", 6),
-	Location("Lahaina Grill", "", 7),
-	Location("Paia Fish Market", "", 8),
-	Location("Monkeypod Kitchen by Merriman", "", 9),
-	Location("Mala Ocean Tavern", "", 10),
-	Location("Flatbread Company", "", 11)
-];
-function performSearch (search, cb) {
-	function find (pl) {
-		return pl.name.toLowerCase().indexOf(search.toLowerCase());
-	}
-
-	var r = [];
-
-	if (search) {
-		r = [];
-		for (var i = 0; i < allPlaces.length; i++) 
-			if (find(allPlaces[i]) !== -1)
-				r.push(allPlaces[i]);
-
-		r = r.sort(function (a, b) {
-			return find(a) - find(b);
-		});
-	}
-	else
-		r = allPlaces;
-
-	setTimeout(function () {
-		cb(r);
-	}, 100);
-}
-
-
 var Everything = React.createClass({
 	render : function () {
 		return (
@@ -166,12 +126,7 @@ var SubmitButton = React.createClass({
 	}
 });
 
-function Location (name, address, id) {
-	return { name : name, address : address, id : id };
-}
-
-
 
 ReactDOM.render(
 	<Everything />,
-	document.getElementById("allPlaces"));
+	document.getElementById("everything"));
