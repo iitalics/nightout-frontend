@@ -1,10 +1,12 @@
 var PATH_POLL_EVENT = "/fake_event.json?";
 var PATH_VOTE_LINK  = "/vote.html#";
 
-var Button = ReactBootstrap.Button;
-var Input = ReactBootstrap.Input;
-var Table = ReactBootstrap.Table;
-var Label = ReactBootstrap.Label;
+const Button = ReactBootstrap.Button;
+const Input = ReactBootstrap.Input;
+const Table = ReactBootstrap.Table;
+const Label = ReactBootstrap.Label;
+const ProgressBar = ReactBootstrap.ProgressBar;
+const Badge = ReactBootstrap.Badge;
 
 // data from previous form
 var data = window["DATA"] = {};
@@ -12,10 +14,11 @@ data.loading = true;
 data.eventName = "Event Name";
 data.time = "Event Time";
 data.deadline = "Event Deadline";
-data.allSelected = [];
+data.voteChoice = null;
+data.dests = [];
+data.maxVotes = 0;
 
 var form = window["FORM"] = {};
-
 
 
 function getVoteLink () {
@@ -31,15 +34,8 @@ else
 	data.eventId = parseInt(hash[1]);
 
 
-var ShowDate = React.createClass({
-	render : function () {
-		var val = data[this.props.field];
-		val = val.toTimeString().slice(0, 5);
-		return (<div>
-				{this.props.label}  <strong>{val}</strong>
-			</div>);
-	}
-});
+
+
 /*
 			<tr><td>
 				<h3>{"Destinations:"}</h3>
@@ -48,15 +44,40 @@ var ShowDate = React.createClass({
 var Destinations = React.createClass({
 	render : function () {
 		return (
-		<Table><tbody>
-			{data.dests.map(function (place) {
-				return (<tr key={place.id}><td>
-						<h3>{place.name}</h3>
-					</td></tr>);
-			})}
-		</tbody></Table>)
+		<Table>
+			<tbody>
+				{data.dests.map(function (dest) {
+					return (<VoteRow key={dest.id} dest={dest} />);
+				})}
+			</tbody>
+		</Table>)
 	}
 });
+var VoteRow = React.createClass({
+	render : function () {
+		var dest = this.props.dest;
+		var ratio = dest.nvotes / (data.maxVotes + 1);
+		var style = (dest == data.voteChoice) ? "info" : "primary";
+
+		return (
+			<tr onClick={this.handleClick}>
+				<td>
+					<strong>{dest.name} <Badge bsSize="large">{dest.nvotes}</Badge></strong>
+					<ProgressBar striped bsStyle={style} now={ratio * 100} />
+				</td>
+			</tr>);
+	},
+	handleClick : function () {
+		if (data.voteChoice)
+			data.voteChoice.nvotes--;
+		else
+			data.maxVotes++;
+
+		data.voteChoice = this.props.dest;
+		this.props.dest.nvotes++;
+		form.dests.forceUpdate();
+	}
+})
 var ShareLink = React.createClass({
 	render : function () {
 		return (<div>
@@ -64,6 +85,17 @@ var ShareLink = React.createClass({
 			<Input type="text" defaultValue={document.location.href}
 				bsSize="small" />
 			</div>);
+	}
+});
+var CountDown = React.createClass({
+	render : function () {
+		var left = moment().to(data.deadline);
+
+		return (<div><i>Voting ends {left}</i></div>);
+	},
+	componentDidMount : function () {
+		var s = this;
+		setInterval(function () { s.forceUpdate(); }, 1000);
 	}
 });
 
@@ -78,10 +110,14 @@ var Everything = React.createClass({
 
 		return (
 			<div className="container">
-				<h3><Label bsStyle="info">{data.eventName}</Label></h3>
-				<ShowDate label="Time:" field="time" />
+				<div className="text-center">
+					<h3><Label bsStyle="success">{data.eventName}</Label></h3>
+				</div>
+				{"Time: "}
+				<strong>{moment(data.time).format("h:mm A")}</strong>
 				<ShareLink />
-				<Destinations />
+				<CountDown ref={function (self) { form.countDown = self; }} />
+				<Destinations ref={function (self) { form.dests = self; }} />
 			</div>);
 	}
 });
@@ -101,6 +137,10 @@ ReactDOM.render(
 			data.time = new Date(res.event.time);
 			data.deadline = new Date(res.event.deadline);
 			data.dests = res.event.destinations;
+			data.dests.forEach(function (dest) {
+				dest.nvotes = ~~(Math.random() * 10);
+				data.maxVotes = Math.max(data.maxVotes, dest.nvotes);
+			});
 			form.everything.forceUpdate();
 		});
 	}}/>,
