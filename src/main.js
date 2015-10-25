@@ -6,6 +6,11 @@ data.time = "" + new Date();
 data.deadline = "" + new Date();
 data.allSelected = [];
 
+var Button = ReactBootstrap.Button;
+var Table = ReactBootstrap.Table;
+
+
+
 var SearchResult = React.createClass({
 	getInitialState : function () {
 		return {canAdd : data.allSelected.indexOf(this.props.place.id) === -1};
@@ -15,7 +20,7 @@ var SearchResult = React.createClass({
 			<tr>
 				<td>
 					<div className="row container-fluid">
-						<div className="pull-left">{this.props.place.name}</div>
+						{this.props.place.name}
 						<div className="pull-right">
 							{this.renderButton()}
 						</div>
@@ -25,9 +30,9 @@ var SearchResult = React.createClass({
 	},
 	renderButton : function () {
 		if (this.state.canAdd)
-			return (<button className="btn btn-xs btn-success" onClick={this.handleClick}>Add</button>);
+			return (<Button bsSize="xsmall" bsStyle="success" onClick={this.handleClick}>Add</Button>)
 		else
-			return (<button className="btn btn-xs btn-danger" onClick={this.handleClick}>Remove</button>);
+			return (<Button bsSize="xsmall" bsStyle="danger" onClick={this.handleClick}>Remove</Button>);
 	},
 	handleClick : function () {
 		var here = this.props.place;
@@ -45,20 +50,29 @@ var SearchResults = React.createClass({
 	},
 	render : function () {
 		return (
-			<table className="table table-striped">
+			<Table striped className="search-results-table">
 				<tbody>
 				{this.state.results.map(function (data, i) {
 					return (<SearchResult place={data} key={data.id} />)
 				})}
 				</tbody>
-			</table>);
+			</Table>);
 	}
 });
-var FormInput
+var InputText = React.createClass({
+	render : function () {
+		return (
+			<div className="container-fluid">
+				<label className="">{this.props.label}:</label>
+				<input type={this.props.kind} placeholder={this.props.label} className="form-control" />
+			</div>);
+	}
+})
 var FormSearchText = React.createClass({
 	render : function () {
 		return (
-			<input type="text" placeholder="Search..." autofocus="yes" className="form-control" onChange={this.handleChange} />);
+			<input type="text" placeholder="Search..."
+			       autofocus="yes" className="form-control" onChange={this.handleChange} />);
 	},
 	handleChange : function (e) {
 		var val = e.target.value;
@@ -119,10 +133,9 @@ function performSearch (search, cb) {
 
 ReactDOM.render(
 	<div className="container">
-		<div className="container-fluid row">
-			<label className="pull-left col-sm-5">Time:</label>
-			<input type="time" className="form-control pull-right col-sm-5" />
-		</div>
+		<InputText kind="text" label="Name" field="eventName" />
+		<InputText kind="time" label="Time" field="time" />
+		<InputText kind="time" label="Deadline" field="deadline" />
 		<FormSearchText />
 		<SearchResults ref={function (self) {
 			form.searchResults = self;
