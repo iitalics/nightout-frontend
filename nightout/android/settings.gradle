@@ -1,0 +1,3 @@
+rootProject.name = 'nightout'
+
+include ':app'
